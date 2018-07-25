@@ -1,0 +1,45 @@
+M<FastQC>Website : https://www.bioinformatics.babraham.ac.uk/projects/fastqc/Download: https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.7.dmgCommand:$module load java$fastqc r1.fq.gz r2.fq.gz .. seqfileN$unzip r1.fastqc.zip$cd r1.fastqc$less summary #Per base sequence quality#Per sequence quality scores<Trimmomatic: Trim adaptor and poor quality reads for Illumina >Website: http://www.usadellab.org/cms/?page=trimmomaticBinary: http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/Trimmomatic-0.36.zipManual: http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdfCommand:$module load java$java -jar /path/trimmomatic-0.35.jar PE -threads X -phred33 r1.fq.gz r2.fq.gz r1_paired.fq.gz r1_unpaired.fq.gz r2_paired.fq.gz r2_unpaired.fq.gz ILLUMINACLIP:TruSeq3-PE.fa:2:30:10 LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36#Remove adapters (ILLUMINACLIP:TruSeq3-PE.fa:2:30:10), ÊTruSeq3 as used by HiSeq and MiSeq machines#Remove leading low quality or N bases (below quality 3) (LEADING:3)#Remove trailing low quality or N bases (below quality 3) (TRAILING:3)#Scan the read with a 4-base wide sliding window, cutting when the average quality per base drops below 15 (SLIDINGWINDOW:4:15)#Drop reads below the 36 bases long (MINLEN:36): can set to be 100 or more for 100bp read seq.<STAR Alignment>
+
+#manual: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4631051/
+
+#requirements
+
+ Download: https://github.com/alexdobin/STAR/releases
+ Reference genome (GRCh38): https://useast.ensembl.org/info/data/ftp/index.html
+ Annotation GTF file: ftp://ftp.ensembl.org/pub/release-92/gtf/homo_sapiens/Homo_sapiens.GRCh38.92.chr.gtf.gz
+
+$gunzip Homo_sapiens.GRCh38.79.gtf.gz
+
+#build genome index
+
+$cd ~/star/genome$wget ftp://ftp.ensembl.org/pub/release-92/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz$gunzip Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz
+$~/star/code/STAR-STAR_2.4.0k/bin/Linux_x86_64/STAR --runThreadN 12 --runMode genomeGenerate --genomeDir ./ --genomeFastaFiles ./Homo_sapiens.GRCh38.dna.primary_assembly.fa
+
+ ## various files including 4.0K genomeParameters.txt will be generated
+
+
+#Basic run
+
+$cd /star
+$~/star/code/STAR-STAR_2.4.0k/bin/Linux_x86_64/STAR --runThreadN 12 --genomeDir ~/star/genome/ --sjdbGTFfile ~/star/Homo_sapiens.GRCh38.79.gtf --sjdbOverhang 100 --readFilesIn ~/star/r1.fastq.gz ~/star/r2.fastq.gz --outSAMtype BAM SortedByCoordinate --readFilesCommand zcat
+
+ ##For 2 pass mode : --twopassMode Basic
+
+ ##If the input FASTQ files have been previously uncompressed, remove -- readFilesCommand zcat option.
+ ##Log.final.out contains the summary mapping statistics of the run.
+ ##Aligned.out.sam : the main output file containing read alignments in the SAM format
+ ##BAM result: 17G Aligned.sortedByCoord.out.bam 
+
+<Cufflinks>
+#manual & build cufflinks: http://cole-trapnell-lab.github.io/cufflinks/manual/
+#protocol: https://www.nature.com/articles/nprot.2012.016
+
+
+#basic run
+$cufflinks -p 12 --library-type fr-firststrand Aligned.sortedByCoord.out.bam
+
+##--library-norm-method : classic-fpkm (default)
+
+##HTSeq
+
+
