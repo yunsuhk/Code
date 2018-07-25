@@ -1,0 +1,18 @@
+git config --global use.name "[your name]"
+git config --global user.email "[email address]"
+git config --global color.ui auto
+
+## go to repository dir.
+git init
+git status
+git add FILE
+git status
+git commit -m "[message]"
+git diff
+
+git push #origin master
+
+##how to generate/add keygen
+ls -al ~/.ssh
+https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/#adding-your-ssh-key-to-the-ssh-agent
+
