@@ -12,6 +12,14 @@ git diff
 
 git push #origin master
 
+#download files from collaborator
+git clone ##LinkofCollaborator FOLDER_NAME
+cat .git/config ## identify remote "origin"
+git push ## to upload 
+
+#if there is any change from collaborator
+git pull
+
 ##how to generate/add keygen
 ls -al ~/.ssh
 https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/#adding-your-ssh-key-to-the-ssh-agent
